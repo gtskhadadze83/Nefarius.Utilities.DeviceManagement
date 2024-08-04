@@ -10,12 +10,11 @@ on:
 
 jobs:
   build:
-    name: Build driver samples
     strategy:
-      fail-fast: false
       matrix:
-        configuration: [Debug, Release]
+        configuration: [Release]
         platform: [x64]
+        arch: [x64]
     runs-on: windows-2022
     steps:
       - name: Check out repository code
@@ -26,8 +25,32 @@ jobs:
       - name: Setup .Net SDK
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: 7.x
+          dotnet-version: 8.x
           include-prerelease: false
 
       - name: Build
         run: dotnet build -c Release
+
+      - name: upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: DevMan-${{ matrix.arch }}-3.22
+          path: DevMan-${{ matrix.arch }}-3.22.zip
+          if-no-files-found: error
+          compression-level: 0
+        
+  release:
+    runs-on: ubuntu-24.04
+    needs: build
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: get artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: upload artifacts
+        run: gh release upload '3.22' DevMan-${{ matrix.arch }}-3.22.zip -R "${GITHUB_REPOSITORY}"
