@@ -34,8 +34,8 @@ jobs:
       - name: upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: DevMan-${{ matrix.arch }}-3.22
-          path: DevMan-${{ matrix.arch }}-3.22.zip
+          name: DevMan-3.22.zip
+          path: bin/*
           if-no-files-found: error
           compression-level: 0
         
