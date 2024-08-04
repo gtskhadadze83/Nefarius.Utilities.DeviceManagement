@@ -2,15 +2,24 @@ name: .NET
 
 on:
   push:
-    branches: [ "master" ]
+    branches: 
+      - master
   pull_request:
-    branches: [ "master" ]
+    branches:
+      	- master
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: Build driver samples
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Debug, Release]
+        platform: [x64]
+    runs-on: windows-2022
     steps:
-      - uses: actions/checkout@v3
+      - name: Check out repository code
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
